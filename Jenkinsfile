@@ -1,69 +1,42 @@
 pipeline {
-    agent any  // Runs on any available Jenkins agent
+    agent any
 
     environment {
-        // Set Python version (adjust if needed)
-        PYTHON = 'python3'
-        VENV_DIR = "${env.WORKSPACE}/venv"
+        // Use 'python' if added to PATH, else full path (e.g., 'C:\\Python39\\python.exe')
+        PYTHON = 'python'  
+        VENV_DIR = "${env.WORKSPACE}\\venv"
     }
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                checkout scm  // Pulls code from your Git repository
-            }
-        }
-
-        stage('Setup Python Environment') {
+        stage('Check Python') {
             steps {
                 script {
-                    // Create a virtual environment
-                    sh "${PYTHON} -m venv ${VENV_DIR}"
-                    
-                    // Install dependencies
-                    sh "${VENV_DIR}/bin/pip install -r app/requirements.txt"
+                    bat """
+                        ${PYTHON} --version || echo ERROR: Python not found. Install it and add to PATH.
+                    """
                 }
             }
         }
 
-        stage('Run Training & Plotting') {
+        stage('Setup Environment') {
             steps {
                 script {
-                    // Train the model and generate plots
-                    sh "${VENV_DIR}/bin/python app/train_and_plot.py"
+                    bat """
+                        ${PYTHON} -m venv "${VENV_DIR}"
+                        call "${VENV_DIR}\\Scripts\\activate.bat" && pip install -r app\\requirements.txt
+                    """
                 }
             }
         }
 
-        stage('Run Predictions') {
+        stage('Run Scripts') {
             steps {
                 script {
-                    // Execute predictions (optional)
-                    sh "${VENV_DIR}/bin/python app/predict.py"
+                    bat """
+                        call "${VENV_DIR}\\Scripts\\activate.bat" && ${PYTHON} app\\train_and_plot.py
+                    """
                 }
             }
-        }
-
-        stage('Run Main Script') {
-            steps {
-                script {
-                    // Alternatively, run main.py if it's your entry point
-                    sh "${VENV_DIR}/bin/python app/main.py"
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            // Archive generated plots or logs (if needed)
-            archiveArtifacts artifacts: 'app/*.png', allowEmptyArchive: true
-        }
-        success {
-            echo '✅ Pipeline succeeded!'
-        }
-        failure {
-            echo '❌ Pipeline failed! Check logs.'
         }
     }
 }
