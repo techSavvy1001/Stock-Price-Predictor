@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/techSavvy1001/Stock-Price-Predictor'
+            }
+        }
+
         stage('Verify Python') {
             steps {
                 sh 'python3 --version'
@@ -10,14 +16,21 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'python3 -m pip install --upgrade pip'
-                sh 'pip3 install -r requirements.txt'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Run Script') {
             steps {
-                sh 'python3 app/main.py'
+                sh '''
+                    . venv/bin/activate
+                    python3 app/main.py
+                '''
             }
         }
     }
