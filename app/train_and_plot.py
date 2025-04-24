@@ -41,7 +41,7 @@ clf = LinearRegression()
 clf.fit(X_train, y_train)
 
 # Save the model
-with open("model.pkl", "wb") as f:
+with open("app/model.pkl", "wb") as f:
     pickle.dump(clf, f)
 
 accuracy = clf.score(X_test, y_test)
