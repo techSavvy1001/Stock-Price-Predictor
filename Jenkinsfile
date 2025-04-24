@@ -4,13 +4,13 @@ pipeline {
     stages {
         stage('Verify Python') {
             steps {
-                bat 'python --version'
+                sh 'python --version'
             }
         }
 
         stage('Run Scripts') {
             steps {
-                bat 'python app\\main.py'
+                sh 'python app\\main.py'
             }
         }
     }
