@@ -6,7 +6,7 @@ import numpy as np
 app = FastAPI()
 
 # Load the trained model
-with open("model.pkl", "rb") as f:
+with open("app/model.pkl", "rb") as f:
     model = pickle.load(f)
 
 class StockData(BaseModel):
