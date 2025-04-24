@@ -4,13 +4,13 @@ pipeline {
     stages {
         stage('Verify Python') {
             steps {
-                sh 'python --version'
+                sh 'python3 --version'
             }
         }
 
         stage('Run Scripts') {
             steps {
-                sh 'python app\\main.py'
+                sh 'python3 app/main.py'
             }
         }
     }
