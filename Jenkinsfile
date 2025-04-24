@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/techSavvy1001/Stock-Price-Predictor'
+                git branch: 'main', url: 'https://github.com/techSavvy1001/Stock-Price-Predictor'
             }
         }
 
